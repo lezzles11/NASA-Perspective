@@ -23,7 +23,7 @@ function GenerateNasa() {
   let link = `https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl&date=${date}`
   return link.toString()
 }
-function Background({ link }) {
+function Background({ link, onClick }) {
   const style = {
     backgroundImage: `url('${link}')`,
     backgroundRepeat: "no-repeat",
@@ -47,12 +47,13 @@ function Background({ link }) {
           <br />
           <div className="row justify-content-center">
             <br />
-            <a
+            <button
+              onClick={onClick}
               className="btn btn-outline-white wow fadeInDown"
               data-wow-delay="0.4s"
             >
               next
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -69,8 +70,25 @@ class Nasa extends React.Component {
       date: "",
       video: "",
     }
-    this.showPhoto = this.showPhoto.bind(this)
+    this.nextPhotoAndQuote = this.nextPhotoAndQuote.bind(this)
     this.axiosCall = this.axiosCall.bind(this)
+  }
+  nextPhotoAndQuote() {
+    let link = GenerateNasa()
+    axios.get(link).then(response => {
+      console.log(response.data)
+      console.log("HEREE")
+
+      console.log(response.data.url)
+      console.log(response.data.hdurl)
+      console.log(response.data.copyright)
+      this.setState({
+        photo: response.data.hdurl,
+        photographer: "Photographer: " + response.data.copyright,
+        date: "Date: " + response.data.date,
+        video: response.data.url,
+      })
+    })
   }
 
   axiosCall(e) {
@@ -97,14 +115,8 @@ class Nasa extends React.Component {
   showPhoto() {
     return (
       <div>
-        <Background link={this.state.photo} />
+        <Background link={this.state.photo} onClick={this.nextPhotoAndQuote} />
         <Video videoSrcURL={this.state.video} />
-        <Card
-          source={this.state.photo}
-          photographer={this.state.photographer}
-          render={this.axiosCall}
-          date={this.state.date}
-        />
       </div>
     )
   }
