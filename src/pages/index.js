@@ -6,11 +6,26 @@ import Image from "../components/image"
 import SEO from "../components/seo"
 import axios from "axios"
 import Video from "../components/Video"
-
-function Template() {
+function getRandom(int) {
+  let num = Math.random() * (int - 1) + 1
+  return Math.floor(num)
+}
+function GetDate() {
+  let day = getRandom(28)
+  let month = getRandom(12)
+  let year = getRandom(9)
+  let yearString = "201".concat(year)
+  console.log(yearString)
+  return yearString + "-" + month + "-" + day
+}
+function GenerateNasa() {
+  let date = GetDate()
+  let link = `https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl&date=${date}`
+  return link.toString()
+}
+function Background({ link }) {
   const style = {
-    backgroundImage:
-      "url('https://mdbootstrap.com/img/Photos/Others/img%20%2848%29.jpg')",
+    backgroundImage: `url('${link}')`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPosition: "center center",
@@ -29,6 +44,7 @@ function Template() {
               <strong>hi intro</strong>
             </h1>
           </div>
+          <br />
           <div className="row justify-content-center">
             <br />
             <a
@@ -43,6 +59,7 @@ function Template() {
     </div>
   )
 }
+
 class Nasa extends React.Component {
   constructor(props) {
     super(props)
@@ -59,7 +76,7 @@ class Nasa extends React.Component {
   axiosCall(e) {
     axios
       .get(
-        "https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl"
+        `https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl&date=2019-12-5`
       )
       .then(response => {
         console.log(response.data)
@@ -76,9 +93,11 @@ class Nasa extends React.Component {
         })
       })
   }
+
   showPhoto() {
     return (
       <div>
+        <Background link={this.state.photo} />
         <Video videoSrcURL={this.state.video} />
         <Card
           source={this.state.photo}
@@ -110,10 +129,6 @@ function Card({ source, photographer, render, date }) {
   )
 }
 
-function getRandom(int) {
-  let num = Math.random() * (int - 1) + 1
-  return Math.floor(num)
-}
 const quotes = [
   "That 13.8 billion years ago, something smaller than an electron chose to swell within a fraction of a second like an expanding balloon into a zone permeated with energy 93 billion light years in size that we now clumsily call the universe",
   "That some of the energy from this swift expansion was able to coagulate into particles, which grouped together to form the light atoms of hydrogen, lithium and helium",
@@ -199,7 +214,6 @@ function OriginalIndex() {
   return (
     <div>
       <Layout>
-        <Template />
         <SEO title="Home" />
         <QuoteBox />
         <Nasa />
@@ -223,6 +237,6 @@ function OriginalIndex() {
   )
 }
 
-const IndexPage = () => <Template />
+const IndexPage = () => <Nasa />
 
 export default IndexPage
