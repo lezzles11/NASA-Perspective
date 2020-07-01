@@ -1,9 +1,114 @@
 import React, { useState } from "react"
 import { Link } from "gatsby"
-
+import "../components/styles.css"
 import Layout from "../components/layout"
 import Image from "../components/image"
 import SEO from "../components/seo"
+import axios from "axios"
+import Video from "../components/Video"
+
+function Template() {
+  const style = {
+    backgroundImage:
+      "url('https://mdbootstrap.com/img/Photos/Others/img%20%2848%29.jpg')",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    height: "100vh",
+  }
+  const hrStyle = {
+    borderTop: "3px solid #fff",
+    width: "80px",
+  }
+  return (
+    <div className="view jarallax" data-jarallax='{"speed": 0.2}' style={style}>
+      <div className="mask rgba-black-light d-flex justify-content-center align-items-center">
+        <div className="container">
+          <div className="row justify-content-center">
+            <h1 className="font9 h1-reponsive white-text text-uppercase font-weight-bold mb-0 pt-md-5 pt-5">
+              <strong>hi intro</strong>
+            </h1>
+          </div>
+          <div className="row justify-content-center">
+            <br />
+            <a
+              className="btn btn-outline-white wow fadeInDown"
+              data-wow-delay="0.4s"
+            >
+              next
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+class Nasa extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      photo: "",
+      photographer: "",
+      date: "",
+      video: "",
+    }
+    this.showPhoto = this.showPhoto.bind(this)
+    this.axiosCall = this.axiosCall.bind(this)
+  }
+
+  axiosCall(e) {
+    axios
+      .get(
+        "https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl"
+      )
+      .then(response => {
+        console.log(response.data)
+        console.log("HEREE")
+
+        console.log(response.data.url)
+        console.log(response.data.hdurl)
+        console.log(response.data.copyright)
+        this.setState({
+          photo: response.data.hdurl,
+          photographer: "Photographer: " + response.data.copyright,
+          date: "Date: " + response.data.date,
+          video: response.data.url,
+        })
+      })
+  }
+  showPhoto() {
+    return (
+      <div>
+        <Video videoSrcURL={this.state.video} />
+        <Card
+          source={this.state.photo}
+          photographer={this.state.photographer}
+          render={this.axiosCall}
+          date={this.state.date}
+        />
+      </div>
+    )
+  }
+  render() {
+    return <div>{this.showPhoto()}</div>
+  }
+}
+
+function Card({ source, photographer, render, date }) {
+  return (
+    <div className="card">
+      <div className="card-body">
+        <img className="img-fluid" src={source} />
+
+        {photographer && <div> {photographer} </div>}
+        {date && <div> {date} </div>}
+        <button className="btn" onClick={render}>
+          Show NASA Photo of the Day
+        </button>
+      </div>
+    </div>
+  )
+}
 
 function getRandom(int) {
   let num = Math.random() * (int - 1) + 1
@@ -56,30 +161,68 @@ function FlipThroughQuotes() {
   )
 }
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <a href="https://www.theschooloflife.com/thebookoflife/how-science-could-at-last-properly-replace-religion/">
-      <button>All facts taken from here</button>
-    </a>
-    <h1>
-      it turns out that science is supremely capable of nurturing feelings of
-      gratitude because of a basic truth about the way gratitude works: that it
-      arises from a sense of contrast, from an awareness of how much more awful
-      things might have been, of how dreadful things can get – and of how lucky,
-      all things considered, we have turned out to be.
-    </h1>
-    <h1>Take it slow</h1>
-    Okay, next, do the nasa image
-    <FlipThroughQuotes />
-    <p>Welcome to your new Gatsby site.</p>
-    <h1>First, lets click through a series of array</h1>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
+class QuoteBox extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      currentQuote:
+        "That 13.8 billion years ago, something smaller than an electron chose to swell within a fraction of a second like an expanding balloon into a zone permeated with energy 93 billion light years in size that we now clumsily call the universe",
+    }
+    this.handleClick = this.handleClick.bind(this)
+  }
+  handleClick = event => {
+    event.preventDefault()
+    // on click, i want to get a new quote
+    let num = getRandom(quotes.length)
+    this.setState({
+      currentQuote: quotes[num],
+    })
+  }
+  render() {
+    return (
+      <div id="quote-box">
+        <h2 id="text">{this.state.currentQuote}</h2>
+        <p id="author">Author</p>
+        <button onClick={this.handleClick} id="new-quote">
+          New Quote
+        </button>
+        <br />
+        <a id="tweet-quote" href="https://www.twitter.com">
+          Tweet this quote!
+        </a>
+      </div>
+    )
+  }
+}
+
+function OriginalIndex() {
+  return (
+    <div>
+      <Layout>
+        <Template />
+        <SEO title="Home" />
+        <QuoteBox />
+        <Nasa />
+        <a href="https://www.theschooloflife.com/thebookoflife/how-science-could-at-last-properly-replace-religion/">
+          <button>All facts taken from here</button>
+        </a>
+        <h1>
+          it turns out that science is supremely capable of nurturing feelings
+          of gratitude because of a basic truth about the way gratitude works:
+          that it arises from a sense of contrast, from an awareness of how much
+          more awful things might have been, of how dreadful things can get –
+          and of how lucky, all things considered, we have turned out to be.
+        </h1>
+        <h1>Take it slow</h1>
+        <p>Welcome to your new Gatsby site.</p>
+        <h1>First, lets click through a series of array</h1>
+        <Link to="/page-2/">Go to page 2</Link> <br />
+        <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
+      </Layout>
     </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+  )
+}
+
+const IndexPage = () => <Template />
 
 export default IndexPage
