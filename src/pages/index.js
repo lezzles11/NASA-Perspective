@@ -6,10 +6,16 @@ import Image from "../components/image"
 import SEO from "../components/seo"
 import axios from "axios"
 import Video from "../components/Video"
+import QuoteBox from "../components/quotebox"
+import BackgroundImage from "../components/background"
+import Img from "gatsby-image"
+import Nasa1 from "../components/NasaImages/Nasa1"
+
 function getRandom(int) {
   let num = Math.random() * (int - 1) + 1
   return Math.floor(num)
 }
+
 function GetDate() {
   let day = getRandom(28)
   let month = getRandom(12)
@@ -23,7 +29,7 @@ function GenerateNasa() {
   let link = `https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl&date=${date}`
   return link.toString()
 }
-function Background({ link, onClick }) {
+function Background({ link, onClick, author }) {
   const style = {
     backgroundImage: `url('${link}')`,
     backgroundRepeat: "no-repeat",
@@ -52,8 +58,13 @@ function Background({ link, onClick }) {
               className="btn btn-outline-white wow fadeInDown"
               data-wow-delay="0.4s"
             >
-              next
+              Download
             </button>
+          </div>
+          <div className="row justify-content-center">
+            <h3 className="font9 h1-reponsive white-text text-uppercase font-weight-bold mb-0 pt-md-5 pt-5">
+              {author}
+            </h3>
           </div>
         </div>
       </div>
@@ -98,11 +109,6 @@ class Nasa extends React.Component {
       )
       .then(response => {
         console.log(response.data)
-        console.log("HEREE")
-
-        console.log(response.data.url)
-        console.log(response.data.hdurl)
-        console.log(response.data.copyright)
         this.setState({
           photo: response.data.hdurl,
           photographer: "Photographer: " + response.data.copyright,
@@ -115,7 +121,11 @@ class Nasa extends React.Component {
   showPhoto() {
     return (
       <div>
-        <Background link={this.state.photo} onClick={this.nextPhotoAndQuote} />
+        <Background
+          author={this.state.photographer}
+          link={this.state.photo}
+          onClick={this.nextPhotoAndQuote}
+        />
         <Video videoSrcURL={this.state.video} />
       </div>
     )
@@ -164,63 +174,7 @@ const quotes = [
   "That we only register sounds between 20Hz and 20,000Hz and so miss all that is above (infrasound) and below (ultrasound). We can’t detect the sounds of the Sumatran rhinoceros (3 Hz) or of air passing over the tops of mountains. We miss the noise emitted by lightning above us and by the harmonic tremor of pressurised magma deep in the earth below us",
   "That the last 250 years, the period since we became urbanised and began living with technology in scientific culture encompasses a mere 0.1%. History is still happening now.",
   "That individuals and species may die; life itself survives (at least until the sun burns out). We are standing on the petrified remains and fossilised bodies of thousands of species which came before us.",
-  "",
-  "",
 ]
-
-function FlipThroughQuotes() {
-  const [quote, setQuote] = useState(quotes[0])
-
-  const nextQuote = () => {
-    let index = getRandom(quotes.length)
-    console.log(index)
-    setQuote(quotes[index])
-    // I want to make sure that I don't create the
-    // same
-  }
-  return (
-    <div>
-      Quotes
-      <br />
-      {quote}
-      <button onClick={nextQuote}>Next</button>
-    </div>
-  )
-}
-
-class QuoteBox extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      currentQuote:
-        "That 13.8 billion years ago, something smaller than an electron chose to swell within a fraction of a second like an expanding balloon into a zone permeated with energy 93 billion light years in size that we now clumsily call the universe",
-    }
-    this.handleClick = this.handleClick.bind(this)
-  }
-  handleClick = event => {
-    event.preventDefault()
-    // on click, i want to get a new quote
-    let num = getRandom(quotes.length)
-    this.setState({
-      currentQuote: quotes[num],
-    })
-  }
-  render() {
-    return (
-      <div id="quote-box">
-        <h2 id="text">{this.state.currentQuote}</h2>
-        <p id="author">Author</p>
-        <button onClick={this.handleClick} id="new-quote">
-          New Quote
-        </button>
-        <br />
-        <a id="tweet-quote" href="https://www.twitter.com">
-          Tweet this quote!
-        </a>
-      </div>
-    )
-  }
-}
 
 function OriginalIndex() {
   return (
@@ -249,6 +203,6 @@ function OriginalIndex() {
   )
 }
 
-const IndexPage = () => <Nasa />
+const IndexPage = () => <QuoteBox />
 
 export default IndexPage
