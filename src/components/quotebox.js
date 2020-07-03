@@ -1,10 +1,119 @@
 import React from "react"
+import { useStaticQuery, graphql } from "gatsby"
+import Img from "gatsby-image"
+import axios from "axios"
+import Video from "./Video"
 
 function getRandom(int) {
   let num = Math.random() * (int - 1) + 1
   return Math.floor(num)
 }
+function GetDate() {
+  let day = getRandom(28)
+  let month = getRandom(12)
+  let year = getRandom(9)
+  let yearString = "201".concat(year)
+  console.log(yearString)
+  return yearString + "-" + month + "-" + day
+}
+function GenerateNasa() {
+  let date = GetDate()
+  let link = `https://api.nasa.gov/planetary/apod?api_key=BgdSh6TJymSVTEzSdueBFQ7kngdEnCaXsd9JEXMl&date=${date}`
+  return link.toString()
+}
 
+const Image = () => {
+  const data = useStaticQuery(graphql`
+    query {
+      placeholderImage: file(relativePath: { eq: "Nasa2.png" }) {
+        childImageSharp {
+          fluid(maxWidth: 300) {
+            ...GatsbyImageSharpFluid
+          }
+        }
+      }
+    }
+  `)
+
+  return <Img fluid={data.placeholderImage.childImageSharp.fluid} />
+}
+
+function Background({ link, onClick, quote, author }) {
+  const style = {
+    backgroundImage: `url('${link}')`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    height: "100vh",
+  }
+  const hrStyle = {
+    borderTop: "3px solid #fff",
+    width: "80px",
+  }
+  return (
+    <div className="view jarallax" data-jarallax='{"speed": 0.2}' style={style}>
+      <div className="mask rgba-black-light d-flex justify-content-center align-items-center">
+        <div className="container">
+          <div className="row justify-content-center">
+            <h1 className="font9 h1-reponsive white-text text-uppercase font-weight-bold mb-0 pt-md-5 pt-5">
+              <strong>{quote}</strong>
+            </h1>
+          </div>
+          <br />
+          <div className="row justify-content-center">
+            <br />
+            <button
+              onClick={onClick}
+              className="btn btn-outline-white wow fadeInDown"
+              data-wow-delay="0.4s"
+            >
+              Next
+            </button>
+          </div>
+          <div className="row justify-content-center">
+            <h3 className="font9 h1-reponsive white-text text-uppercase font-weight-bold mb-0 pt-md-5 pt-5">
+              {author}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const images = [
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1949a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2026a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2025a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1951a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2022a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2025a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2023a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/stsci-h-p1951a-f-1631x1767.png",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1941a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1943a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1942a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1938a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1940a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1939a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1948a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw1949a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/heic1501b_0.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2014a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2011a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2015a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2014a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/heic1501b_0.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2013a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2013a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2022a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2021a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2019a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2017a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2014a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2011a.jpg",
+  "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2010a.jpg",
+]
 const quotes = [
   "That 13.8 billion years ago, something smaller than an electron chose to swell within a fraction of a second like an expanding balloon into a zone permeated with energy 93 billion light years in size that we now clumsily call the universe",
   "That some of the energy from this swift expansion was able to coagulate into particles, which grouped together to form the light atoms of hydrogen, lithium and helium",
@@ -33,6 +142,9 @@ class QuoteBox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      currentImage:
+        "https://www.nasa.gov/sites/default/files/styles/full_width_feature/public/thumbnails/image/potw2026a.jpg",
+      currentMediaType: "photo",
       currentQuote:
         "That 13.8 billion years ago, something smaller than an electron chose to swell within a fraction of a second like an expanding balloon into a zone permeated with energy 93 billion light years in size that we now clumsily call the universe",
     }
@@ -41,32 +153,20 @@ class QuoteBox extends React.Component {
   handleClick = event => {
     event.preventDefault()
     // on click, i want to get a new quote
-    let num = getRandom(quotes.length)
     this.setState({
-      currentQuote: quotes[num],
+      currentQuote: quotes[getRandom(quotes.length)],
+      currentImage: images[getRandom(quotes.length)],
     })
   }
+
   render() {
     return (
-      <div className="font6 container">
-        <div className="card">
-          <div className="card-body" id="quote-box">
-            <h2 className="font6 card-title" id="text">
-              {this.state.currentQuote}
-            </h2>
-            <p id="author">The School of Life</p>
-            <button
-              className="button btn"
-              onClick={this.handleClick}
-              id="new-quote"
-            >
-              New Quote
-            </button>
-            <a id="tweet-quote" href="https://www.twitter.com">
-              <button className="button btn"> Tweet this quote!</button>
-            </a>
-          </div>
-        </div>
+      <div id="quote-box" className="font6">
+        <Background
+          link={this.state.currentImage}
+          quote={this.state.currentQuote}
+          onClick={this.handleClick}
+        />
       </div>
     )
   }
